@@ -57,7 +57,13 @@ func Scan(roots []models.Root, adapters []providers.Provider) ([]models.Item, er
 			if !ok {
 				return nil
 			}
+			if typ == models.Skill && (filepath.Base(path) != "SKILL.md" || filepath.Dir(path) == root.Path) {
+				return nil
+			}
 			name := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+			if typ == models.Skill && filepath.Base(path) == "SKILL.md" && filepath.Dir(path) != root.Path {
+				name = filepath.Base(filepath.Dir(path))
+			}
 			if name == "" {
 				return nil
 			}
@@ -111,9 +117,13 @@ func classify(root, path string) (models.Type, bool) {
 		if ext == ".md" {
 			return models.Skill, true
 		}
-	case "commands", "prompts":
+	case "commands":
 		if ext == ".md" {
 			return models.Command, true
+		}
+	case "prompts":
+		if ext == ".md" {
+			return models.Prompt, true
 		}
 	case "rules":
 		if ext == ".md" {

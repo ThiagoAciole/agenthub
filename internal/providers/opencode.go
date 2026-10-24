@@ -9,9 +9,14 @@ import (
 type OpenCode struct{}
 
 func (OpenCode) Name() string { return "opencode" }
-func (OpenCode) Roots(g, p string) []models.Root {
+func (OpenCode) Roots(home, p string) []models.Root {
 	config, _ := os.UserConfigDir()
 	base := filepath.Join(config, "opencode")
 	r := roots("opencode", base, p, []string{"agents", "skills", "commands"}, ".opencode")
-	return append(r, models.Root{Provider: "opencode", Scope: "global", Path: filepath.Join(base, "opencode.json")}, models.Root{Provider: "opencode", Scope: "project", Path: filepath.Join(p, "opencode.json")})
+	return append(r,
+		models.Root{Provider: "opencode", Scope: "global", Path: filepath.Join(home, ".agents", "skills")},
+		models.Root{Provider: "opencode", Scope: "project", Path: filepath.Join(p, ".agents", "skills")},
+		models.Root{Provider: "opencode", Scope: "global", Path: filepath.Join(base, "opencode.json")},
+		models.Root{Provider: "opencode", Scope: "project", Path: filepath.Join(p, "opencode.json")},
+	)
 }
